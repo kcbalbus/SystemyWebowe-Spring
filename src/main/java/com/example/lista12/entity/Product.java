@@ -16,6 +16,7 @@ public class Product {
     @Min(1)
     private long productId;
     @Column(nullable = false)
+    @NotBlank
     private String productName;
     @DecimalMin("0.0")
     private double weight;

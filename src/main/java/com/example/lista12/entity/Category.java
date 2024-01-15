@@ -1,9 +1,7 @@
 package com.example.lista12.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,11 +17,14 @@ import java.util.List;
 public class Category {
     @Id
     @Column(unique = true)
+    @NotBlank
     private String categoryCode;
+    @NotBlank
     private String categoryName;
 
     @OneToMany(
-            mappedBy = "category"
+            mappedBy = "category",
+            cascade = CascadeType.ALL
     )
     private List<Product> products;
 }
