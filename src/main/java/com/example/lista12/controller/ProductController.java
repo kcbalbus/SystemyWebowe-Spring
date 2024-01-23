@@ -1,18 +1,17 @@
 package com.example.lista12.controller;
-
-import com.example.lista12.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 import com.example.lista12.entity.Product;
 import com.example.lista12.service.ProductService;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
-@RestController
-@RequestMapping("/products")
+
+@Controller
 public class ProductController {
     private final ProductService productService;
 
@@ -21,43 +20,57 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        Product addedProduct = productService.addProduct(product);
-        return new ResponseEntity<>(addedProduct, HttpStatus.CREATED);
+    @GetMapping("/product/")
+    public String home(Locale locale, Model model) {
+        Date date = new Date();
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG,
+                DateFormat.LONG, locale);
+        String serverTime = dateFormat.format(date);
+        model.addAttribute("serverTime", serverTime);
+        List<Product> productList = productService.getAllProducts();
+        model.addAttribute("productList", productList );
+        return "product/index";
     }
 
-    @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+    @GetMapping("/product/add")
+    public String add(Model model) {
+        model.addAttribute("product", new Product());
+        return "/product/add";
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable long id) {
-        return productService.getProductById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable long id, @RequestBody Product productDetails) {
-        try {
-            Product updatedProduct = productService.updateProduct(productDetails, id);
-            return ResponseEntity.ok(updatedProduct);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
+    @PostMapping("/product/add")
+    public String add(@ModelAttribute Product product, Model model) {
+        if(productService.getProductById(product.getProductId()).isPresent()){
+            model.addAttribute("error", "Product with this ID already exists.");
+            return "/product/add";
         }
+        productService.addProduct(product);
+        return "redirect:/product/";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable long id) {
-        try {
-            productService.deleteProduct(id);
-            return ResponseEntity.noContent().build();
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/product/details")
+    public String add(@RequestParam("id") long inputId, Model model) {
+        model.addAttribute("product", productService.getProductById(inputId));
+        return "/product/details";
     }
+
+    @GetMapping(value = {"/product/{productId}/edit"})
+    public String edit(Model model, @PathVariable long productId) {
+        model.addAttribute("product", productService.getProductById(productId));
+        return  "/product/edit";
+    }
+
+    @PostMapping(value = {"/product/edit"})
+    public String edit (@ModelAttribute Product product) {
+        productService.updateProduct(product);
+        return "redirect:/product/";
+    }
+
+    @GetMapping("/product/remove")
+    public String remove(@RequestParam("id") long id) {
+        productService.deleteProductById(id);
+        return "redirect:/product/";
+    }
+
 
 }

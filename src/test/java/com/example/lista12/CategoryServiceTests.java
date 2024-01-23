@@ -76,7 +76,7 @@ public class CategoryServiceTests {
 
         when(categoryRepository.existsById(categoryId)).thenReturn(true);
 
-        categoryService.deleteCategory(categoryId);
+        categoryService.deleteCategoryById(categoryId);
         verify(categoryRepository, times(1)).deleteById(categoryId);
     }
 }

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="_shared/_layout">
+
+<title layout:fragment="title">Edit product</title>
+
+<div layout:fragment="content">
+    <h1>Edit product</h1>
+    <form action="#" th:action="@{/templates/product/edit}" th:object="${product}" method="post">
+        <p>Id: <input type="number" th:field="*{productId}" readonly required/></p>
+        <p>Title: <input type="text" th:field="*{productName}" required/></p>
+        <p>Weight: <input type="number" th:field="*{weight}" required step="0.01" min="0.00"/></p>
+        <p>Price: <input type="number" th:field="*{price}" required step="0.01" min="0.01"/></p>
+        <p>Category: <input type="text" th:field="*{category}" required/></p>
+        <p><input class="btn btn-primary" type="submit" value="Modify" /> <input class="btn btn-primary" type="reset" value="Reset" /></p>
+    </form>
+</div>
+</html>

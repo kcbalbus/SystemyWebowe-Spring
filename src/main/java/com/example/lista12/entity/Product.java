@@ -16,7 +16,8 @@ public class Product {
     @Min(1)
     private long productId;
     @Column(nullable = false)
-    @NotBlank
+    @NotBlank(message="blank field not allowed")
+    @Size(min=3,max=20, message = "use minimum 3 and maximum 20 letters")
     private String productName;
     @DecimalMin("0.0")
     private double weight;
@@ -24,6 +25,6 @@ public class Product {
     private double price;
 
     @ManyToOne
-    @JoinColumn (name = "category")
+    @JoinColumn (name = "category_code")
     private Category category;
 }

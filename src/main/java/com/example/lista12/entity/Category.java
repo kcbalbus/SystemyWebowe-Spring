@@ -1,6 +1,7 @@
 package com.example.lista12.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ public class Category {
     @Id
     @Column(unique = true)
     @NotBlank
+    @Min(1)
     private String categoryCode;
     @NotBlank
     private String categoryName;
